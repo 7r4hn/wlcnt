@@ -7,7 +7,15 @@
   <img alt="Persistent" src="https://img.shields.io/badge/Storage-localStorage-FF9800?style=for-the-badge" />
 </p>
 
-A sleek, modern, and ultra-lightweight Win/Loss counter overlay designed for EA Sports FC 27 streamers and competitive gamers. Built with plain HTML, CSS, and JavaScript, it gives your stream an esports-inspired look while staying fast, simple, and reliable in OBS.
+A sleek, modern, and ultra-lightweight Win/Loss counter overlay designed for EA Sports FC 27 streamers and competitive gamers. Built with plain HTML, CSS, and JavaScript, it gives your stream an elegant scoreboard without any heavy dependencies.
+
+## Live browser source
+
+The project is published as a GitHub Pages page and can be used directly in OBS as a Browser Source:
+
+- URL: https://7r4hn.github.io/wlcnt/
+
+This is the recommended way to use the overlay in OBS because it keeps the project clean and ready to load without needing a local file.
 
 ## Why this overlay?
 
@@ -30,14 +38,24 @@ A sleek, modern, and ultra-lightweight Win/Loss counter overlay designed for EA 
 
 ## Quick start
 
-1. Open the project folder in your browser or use the live GitHub Pages URL.
-2. Add a new Browser Source in OBS.
-3. Select either:
-   - your local `index.html` file, or
-   - the hosted URL if you're using GitHub Pages
+### Use in OBS
+
+1. Open OBS.
+2. Add a new Browser Source.
+3. Set the URL to:
+   - https://7r4hn.github.io/wlcnt/
 4. Set the dimensions to:
    - Width: `276`
    - Height: `146`
+5. Click OK and start using the overlay.
+
+### Local file option
+
+If you want to test locally:
+
+1. Open the project folder in your browser.
+2. Use `index.html` directly.
+3. Or open it from a local server if you prefer.
 
 ## Controls
 
@@ -56,16 +74,19 @@ This makes it easy to manage your score without needing extra software or hotkey
 - Drag the interaction window to the edge of your OBS layout to keep it docked while streaming.
 - Keep the Browser Source in a compact, fixed-size canvas for the cleanest look.
 - Because it uses `localStorage`, your current record stays saved between sessions.
+- If the page does not load in OBS, refresh the browser source or confirm the GitHub Pages URL is exactly correct.
 
 ## Project structure
 
 ```text
 .
 ├── index.html
-├── style.css
-├── script.js
+├── champs.svg
 ├── README.md
-└── assets/
+├── test-assets/
+│   ├── win-preview.svg
+│   └── loss-preview.svg
+└── .github/
 ```
 
 ## Demo
