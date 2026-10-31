@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FC 27 W/L Overlay 276x146</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; }
+    body { display: flex; align-items: center; justify-content: center; font-family: 'Chakra Petch', sans-serif; }
+
+    .scoreboard {
+      position: relative;
+      width: 260px;
+      height: 120px;
+      display: flex; align-items: center; justify-content: center;
+      filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.8)); user-select: none;
+    }
+
+    .side {
+      flex: 1; height: 46px; transform: skewX(-20deg); position: relative;
+      cursor: pointer; overflow: hidden;
+      border-top: 1px solid rgba(218, 165, 32, 0.6);
+      border-bottom: 1px solid rgba(218, 165, 32, 0.6);
+      transition: filter 0.2s, transform 0.1s; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+    }
+    .side:hover { filter: brightness(1.2); }
+    .side:active { transform: skewX(-20deg) scale(0.97); }
+
+    .side.win {
+      background: linear-gradient(90deg, rgba(12, 35, 18, 0.95), rgba(25, 75, 35, 0.9));
+      border-left: 3px solid #00ff66; margin-right: -6px;
+    }
+    .side.loss {
+      background: linear-gradient(270deg, rgba(35, 10, 15, 0.95), rgba(80, 20, 30, 0.9));
+      border-right: 3px solid #ff1a1a; margin-left: -6px;
+    }
+
+    .side::before {
+      content: ''; position: absolute; inset: -30px;
+      background: repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 8px),
+                  repeating-linear-gradient(-45deg, rgba(255,255,255,0.04) 0, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 8px);
+      z-index: 0; transform: skewX(20deg); pointer-events: none;
+    }
+
+    .side-content {
+      position: relative; z-index: 2; transform: skewX(20deg);
+      display: flex; align-items: center; justify-content: center;
+      height: 100%; width: 100%;
+    }
+    .side.win .side-content { padding-right: 22px; }
+    .side.loss .side-content { padding-left: 22px; }
+
+    .score {
+      color: #ffffff; font-size: 28px; line-height: 1;
+      font-weight: 700; text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .center {
+      position: absolute; z-index: 10; left: 50%; top: 50%;
+      width: 80px; height: 80px; transform: translate(-50%, -50%);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+
+    .center img {
+      width: 100%; height: 100%; object-fit: contain;
+      transform-style: preserve-3d; backface-visibility: visible;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.8));
+      animation: rotateLogo 60s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes rotateLogo {
+      0% { transform: rotateY(0deg); }
+      1.66% { transform: rotateY(360deg); }
+      100% { transform: rotateY(360deg); }
+    }
+
+    .center:hover img { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7)); }
+  </style>
+</head>
+<body>
+  <main class="scoreboard" aria-label="WL Skor Takip">
+    <div class="side win" id="winSide" title="Galibiyet ekle (Sağ tık: 1 azalt)">
+      <div class="side-content"><span class="score" id="winCount">0</span></div>
+    </div>
+
+    <div class="center" id="reset" title="Sayaçları sıfırlamak için tıkla">
+      <img alt="WL Logo" src="sayac/asd.png">
+    </div>
+
+    <div class="side loss" id="lossSide" title="Mağlubiyet ekle (Sağ tık: 1 azalt)">
+      <div class="side-content"><span class="score" id="lossCount">0</span></div>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      const lossEl = document.getElementById('lossCount');
+      const winEl = document.getElementById('winCount');
+      let loss = 0, win = 0;
+
+      try {
+        const saved = JSON.parse(localStorage.getItem('wl-counter-fc27-mini') || '{}');
+        loss = Math.max(0, Number(saved.loss) || 0);
+        win = Math.max(0, Number(saved.win) || 0);
+      } catch (_) {}
+
+      function render() {
+        lossEl.textContent = loss;
+        winEl.textContent = win;
+        try { localStorage.setItem('wl-counter-fc27-mini', JSON.stringify({loss, win})); } catch (_) {}
+      }
+
+      document.getElementById('lossSide').addEventListener('click', () => { loss++; render(); });
+      document.getElementById('winSide').addEventListener('click', () => { win++; render(); });
+
+      document.getElementById('lossSide').addEventListener('contextmenu', (e) => {
+        e.preventDefault(); if(loss > 0) loss--; render();
+      });
+      document.getElementById('winSide').addEventListener('contextmenu', (e) => {
+        e.preventDefault(); if(win > 0) win--; render();
+      });
+
+      document.getElementById('reset').addEventListener('click', () => {
+        loss = 0; win = 0; render();
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
